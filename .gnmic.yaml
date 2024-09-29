@@ -1,0 +1,45 @@
+# gnmic.yaml
+username: admin
+password: admin
+insecure: true
+
+targets:
+  R1:
+    address: 10.10.200.1:6030
+  R2:
+    address: 10.10.200.2:6030
+  R3:
+    address: 10.10.200.3:6030
+  R4:
+    address: 10.10.200.4:6030
+  sw4:
+    address: 10.10.200.42:6030
+  sw3:
+    address: 10.10.200.32:6030
+  sw1:
+    address: 10.10.201.12:6030
+  sw2:
+    address: 10.10.201.22:6030
+
+subscriptions:
+  interface-counters:
+    paths:
+      - /interfaces/interface/state/oper-status
+      - components/component/cpu
+    sample-interval: 10s
+
+outputs:
+  influxdb:
+    type: influxdb
+    url: http://localhost:8086
+    org: boulder
+    bucket: lab2
+    token: ZvM60KrgnvqIwb-RY7FaWuHMNmoD5r6LPGNXHRKMGDJt8pUrbW-kAoNNHiqhVgCsuSVNfYQI9d78m-kQhtAfpw== #admin:admin123
+    override-timestamps: false
+    timestamp-precision: s
+    health-check-period: 30s
+    # enable debug
+    debug: true
+      #grpcfile:
+      #type: file
+      #filename: /home/student/lab1/grpcdata.log
