@@ -43,9 +43,9 @@ def configure():
     if request.method == 'POST':
         device_name = request.form['device_name']
         interface = request.form['interface']
-        new_ip_address = request.form['ip_address']  # New IP for the interface
+        new_ip_address = request.form.get('ip_address')  # New IP for the interface
         interface_status = request.form.get('interface_status')  # 'on' or 'off'
-        routing_protocol = request.form['routing_protocol']
+        routing_protocol = request.form.get('routing_protocol')  # Make this optional
 
         # Find the device based on the selected device name
         device = next((dev for dev in devices if dev['name'].lower() == device_name.lower()), None)
@@ -65,21 +65,25 @@ def configure():
             commands.append("configure terminal")
             commands.append(f"interface {interface}")
 
-            # Set the IP address of the interface
-            commands.append(f"ip address {new_ip_address} 255.255.255.0")  # Example subnet mask
+            # Set the IP address of the interface if provided
+            if new_ip_address:
+                commands.append(f"ip address {new_ip_address} 255.255.255.0")  # Example subnet mask
 
-            # Change interface status
-            if interface_status == 'on':
-                commands.append("no shutdown")
-            else:
-                commands.append("shutdown")
+            # Change interface status if provided
+            if interface_status:
+                if interface_status == 'on':
+                    commands.append("no shutdown")
+                else:
+                    commands.append("shutdown")
 
             # Handle routing protocol configurations only if selected
             if routing_protocol == 'ospf':
-                ospf_area = request.form.get('ospf_area')  # Retrieve OSPF area
-                if ospf_area:  # Ensure area is provided
-                    commands.append("router ospf 1")
-                    commands.append(f"network {new_ip_address} 0.0.0.255 area {ospf_area}")  # Using example subnet
+                ospf_area = request.form.get('ospf_area')
+                ospf_network = request.form.get('ospf_network')  # Retrieve OSPF network
+                ospf_mask = request.form.get('ospf_mask')
+                if ospf_area and ospf_network and ospf_mask:  # Ensure area and network are provided
+                    commands.append("router ospf 100")
+                    commands.append(f"network {ospf_network} {ospf_mask} area {ospf_area}")  # Using example subnet
             elif routing_protocol == 'rip':
                 rip_network = request.form.get('rip_network')  # Retrieve RIP network
                 if rip_network:  # Ensure RIP network is provided
@@ -96,9 +100,10 @@ def configure():
             output = connection.send_config_set(commands)
             connection.disconnect()
 
-            return f"Configured {device_name} interface {interface} with IP {new_ip_address}, status turned {interface_status}, using {routing_protocol} protocol.<br><pre>{output}</pre>"
+            return f"Configured {device_name} interface {interface} with IP {new_ip_address or 'N/A'}, status turned {interface_status or 'N/A'}, using {routing_protocol or 'N/A'} protocol.<br><pre>{output}</pre>"
 
     return render_template('configure.html')
+
 
 @app.route('/save_config/<device_name>')
 def save_config(device_name):

@@ -30,19 +30,20 @@
             </select>
         </div>
         <div>
-            <label for="ip_address">IP Address</label>
-            <input type="text" id="ip_address" name="ip_address" required>
+            <label for="ip_address">IP Address (optional)</label>
+            <input type="text" id="ip_address" name="ip_address">
         </div>
         <div>
-            <label for="interface_status">Interface Status</label>
-            <select id="interface_status" name="interface_status" required>
+            <label for="interface_status">Interface Status (optional)</label>
+            <select id="interface_status" name="interface_status">
                 <option value="on">On</option>
                 <option value="off">Off</option>
             </select>
         </div>
         <div id="routing_protocol_div" style="display:none;">
-            <label for="routing_protocol">Routing Protocol</label>
-            <select id="routing_protocol" name="routing_protocol" required onchange="updateRoutingConfigOptions()">
+            <label for="routing_protocol">Routing Protocol (optional)</label>
+            <select id="routing_protocol" name="routing_protocol" onchange="updateRoutingConfigOptions()">
+                <option value="">Select Protocol</option>
                 <option value="ospf">OSPF</option>
                 <option value="rip">RIP</option>
                 <option value="bgp">BGP</option>
@@ -111,44 +112,41 @@
             } else if (deviceName === 'r3' || deviceName === 'r4') {
                 interfaces = ['ethernet 1', 'ethernet 2', 'ethernet 3', 'loopback1'];
             } else if (deviceName.startsWith('sw')) {
-                interfaces = ['loopback1'];
+                interfaces = ['vlan 1', 'vlan 10', 'vlan 20'];
             }
 
-            // Populate the interface dropdown
-            interfaces.forEach(function(interface) {
+            interfaces.forEach(iface => {
                 const option = document.createElement('option');
-                option.value = interface;
-                option.textContent = interface;
+                option.value = iface;
+                option.textContent = iface;
                 interfaceSelect.appendChild(option);
             });
-        }
 
-        function updateRoutingProtocolOptions() {
-            const deviceName = document.getElementById('device_name').value;
-            const routingProtocolDiv = document.getElementById('routing_protocol_div');
-
-            // Show or hide the routing protocol options based on device selection
-            if (deviceName === 'r1' || deviceName === 'r2' || deviceName === 'r3' || deviceName === 'r4') {
-                routingProtocolDiv.style.display = 'block';
+            // Show the routing protocol options for routers
+            if (deviceName.startsWith('r')) {
+                document.getElementById('routing_protocol_div').style.display = 'block';
             } else {
-                routingProtocolDiv.style.display = 'none';
+                document.getElementById('routing_protocol_div').style.display = 'none';
+                hideAllRoutingConfigOptions();
             }
         }
 
-        function updateRoutingConfigOptions() {
-            const routingProtocol = document.getElementById('routing_protocol').value;
-
-            // Hide all routing configuration fields initially
+        function hideAllRoutingConfigOptions() {
             document.getElementById('ospf_fields').style.display = 'none';
             document.getElementById('rip_fields').style.display = 'none';
             document.getElementById('bgp_fields').style.display = 'none';
+        }
 
-            // Show relevant fields based on selected routing protocol
-            if (routingProtocol === 'ospf') {
+        function updateRoutingConfigOptions() {
+            hideAllRoutingConfigOptions();
+            const routingProtocolSelect = document.getElementById('routing_protocol');
+            const selectedProtocol = routingProtocolSelect.value;
+
+            if (selectedProtocol === 'ospf') {
                 document.getElementById('ospf_fields').style.display = 'block';
-            } else if (routingProtocol === 'rip') {
+            } else if (selectedProtocol === 'rip') {
                 document.getElementById('rip_fields').style.display = 'block';
-            } else if (routingProtocol === 'bgp') {
+            } else if (selectedProtocol === 'bgp') {
                 document.getElementById('bgp_fields').style.display = 'block';
             }
         }
