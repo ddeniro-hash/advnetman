@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h2 class="text-center">Monitoring Page</h2>
+    <p class="text-center">
+        You should be redirected to the monitoring dashboard shortly.
+        If not, click <a href="http://localhost:3000/d/bdyldjufkzzswa/grpcstreaming-network-devices-r1-r4-sw1-sw4?orgId=1" target="_blank">here</a> to go to the monitoring dashboard.
+    </p>
+
+    <script>
+        // Optionally, you can automatically open a new tab after a few seconds
+        setTimeout(function() {
+            window.open("http://localhost:3000/d/bdyldjufkzzswa/grpcstreaming-network-devices-r1-r4-sw1-sw4?orgId=1", "_blank");
+        }, 2000); // Opens in a new tab after 5 seconds
+    </script>
+{% endblock %}
+

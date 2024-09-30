@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h2 class="text-center">Device List</h2>
+    <div class="mt-4" style="max-height: 400px; overflow-y: auto;">
+        <ul class="list-group">
+            {% for device in devices %}
+                <li class="list-group-item">
+                    {{ device.name }} 
+                    <a href="{{ url_for('save_config', device_name=device.name) }}" class="btn btn-primary float-end" target="_blank">Save Config</a>  <!-- Open in new tab -->
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
+{% endblock %}

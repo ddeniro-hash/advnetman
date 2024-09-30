@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>Templatize Configuration</h2>
+
+<h3>Select Device to Templatize:</h3>
+<form action="{{ url_for('templatize_device') }}" method="post">
+    <label for="device">Select Device:</label>
+    <select name="device_name" id="device">
+        {% for name in device_names %}
+        <option value="{{ name }}">{{ name }}</option>
+        {% endfor %}
+    </select>
+    <button type="submit">Convert to YAML</button>
+</form>
+
+{% if result %}
+<h3>Successfully converted {{ result }} config to YAML.</h3>
+{% if templatize_option %}
+    <form action="{{ url_for('generate_template') }}" method="post" target="_blank">
+        <input type="hidden" name="device_name" value="{{ result }}">
+        <button type="submit">Generate Template</button>
+    </form>
+{% endif %}
+{% endif %}
+
+{% endblock %}
+
+

@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Configure New Devices</title>
+</head>
+<body>
+    <h2>Configure New Devices</h2>
+    <form method="POST" action="{{ url_for('configure') }}" target="_blank">  <!-- Open in new tab -->
+        <div>
+            <label for="device_name">Device Name</label>
+            <select id="device_name" name="device_name" onchange="updateInterfaceOptions(); updateRoutingProtocolOptions();" required>
+                <option value="">Select Device</option>
+                <option value="r1">Router 1 (R1)</option>
+                <option value="r2">Router 2 (R2)</option>
+                <option value="r3">Router 3 (R3)</option>
+                <option value="r4">Router 4 (R4)</option>
+                <option value="sw1">Switch 1 (SW1)</option>
+                <option value="sw2">Switch 2 (SW2)</option>
+                <option value="sw3">Switch 3 (SW3)</option>
+                <option value="sw4">Switch 4 (SW4)</option>
+            </select>
+        </div>
+        <div>
+            <label for="interface">Interface</label>
+            <select id="interface" name="interface" required>
+                <option value="">Select Interface</option>
+                <!-- Options will be dynamically populated here -->
+            </select>
+        </div>
+        <div>
+            <label for="ip_address">IP Address</label>
+            <input type="text" id="ip_address" name="ip_address" required>
+        </div>
+        <div>
+            <label for="interface_status">Interface Status</label>
+            <select id="interface_status" name="interface_status" required>
+                <option value="on">On</option>
+                <option value="off">Off</option>
+            </select>
+        </div>
+        <div id="routing_protocol_div" style="display:none;">
+            <label for="routing_protocol">Routing Protocol</label>
+            <select id="routing_protocol" name="routing_protocol" required onchange="updateRoutingConfigOptions()">
+                <option value="ospf">OSPF</option>
+                <option value="rip">RIP</option>
+                <option value="bgp">BGP</option>
+                <option value="static">Static</option>
+            </select>
+        </div>
+
+        <!-- OSPF Configuration Fields -->
+        <div id="ospf_fields" style="display:none;">
+            <div>
+                <label for="ospf_area">OSPF Area</label>
+                <input type="text" id="ospf_area" name="ospf_area">
+            </div>
+            <div>
+                <label for="ospf_network">OSPF Network</label>
+                <input type="text" id="ospf_network" name="ospf_network">
+                <label for="ospf_mask">Mask</label>
+                <input type="text" id="ospf_mask" name="ospf_mask">
+            </div>
+        </div>
+
+        <!-- RIP Configuration Fields -->
+        <div id="rip_fields" style="display:none;">
+            <div>
+                <label for="rip_network">RIP Network</label>
+                <input type="text" id="rip_network" name="rip_network">
+                <label for="rip_router_id">Router ID</label>
+                <input type="text" id="rip_router_id" name="rip_router_id">
+            </div>
+        </div>
+
+        <!-- BGP Configuration Fields -->
+        <div id="bgp_fields" style="display:none;">
+            <div>
+                <label for="bgp_as">BGP AS Number</label>
+                <input type="text" id="bgp_as" name="bgp_as">
+            </div>
+            <div>
+                <label for="bgp_neighbor">BGP Neighbor IP</label>
+                <input type="text" id="bgp_neighbor" name="bgp_neighbor">
+            </div>
+            <div>
+                <label for="bgp_remote_as">BGP Remote AS</label>
+                <input type="text" id="bgp_remote_as" name="bgp_remote_as">
+            </div>
+        </div>
+
+        <button type="submit">Configure</button>
+    </form>
+
+    <p><a href="{{ url_for('home') }}">Back to Home</a></p>
+
+    <script>
+        function updateInterfaceOptions() {
+            const deviceName = document.getElementById('device_name').value;
+            const interfaceSelect = document.getElementById('interface');
+
+            // Clear existing options
+            interfaceSelect.innerHTML = '<option value="">Select Interface</option>';
+
+            // Define interface options based on device selection
+            let interfaces = [];
+
+            if (deviceName === 'r1' || deviceName === 'r2') {
+                interfaces = ['ethernet 1', 'ethernet 2', 'loopback1'];
+            } else if (deviceName === 'r3' || deviceName === 'r4') {
+                interfaces = ['ethernet 1', 'ethernet 2', 'ethernet 3', 'loopback1'];
+            } else if (deviceName.startsWith('sw')) {
+                interfaces = ['loopback1'];
+            }
+
+            // Populate the interface dropdown
+            interfaces.forEach(function(interface) {
+                const option = document.createElement('option');
+                option.value = interface;
+                option.textContent = interface;
+                interfaceSelect.appendChild(option);
+            });
+        }
+
+        function updateRoutingProtocolOptions() {
+            const deviceName = document.getElementById('device_name').value;
+            const routingProtocolDiv = document.getElementById('routing_protocol_div');
+
+            // Show or hide the routing protocol options based on device selection
+            if (deviceName === 'r1' || deviceName === 'r2' || deviceName === 'r3' || deviceName === 'r4') {
+                routingProtocolDiv.style.display = 'block';
+            } else {
+                routingProtocolDiv.style.display = 'none';
+            }
+        }
+
+        function updateRoutingConfigOptions() {
+            const routingProtocol = document.getElementById('routing_protocol').value;
+
+            // Hide all routing configuration fields initially
+            document.getElementById('ospf_fields').style.display = 'none';
+            document.getElementById('rip_fields').style.display = 'none';
+            document.getElementById('bgp_fields').style.display = 'none';
+
+            // Show relevant fields based on selected routing protocol
+            if (routingProtocol === 'ospf') {
+                document.getElementById('ospf_fields').style.display = 'block';
+            } else if (routingProtocol === 'rip') {
+                document.getElementById('rip_fields').style.display = 'block';
+            } else if (routingProtocol === 'bgp') {
+                document.getElementById('bgp_fields').style.display = 'block';
+            }
+        }
+    </script>
+</body>
+</html>
