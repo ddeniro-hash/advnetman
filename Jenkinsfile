@@ -1,14 +1,15 @@
 pipeline {
     agent any
 
+    stages {
         stage('Install Dependencies') {
             steps {
                 // Ensure that Python and pip are available
                 sh 'python3 -m pip install --upgrade pip'
                 sh 'pip install --upgrade netmiko'
                 sh 'pip install --upgrade flask'
-                sh 'pip install --upgrade glob'
-                sh 'pip install --upgrade yaml'
+                sh 'pip install --upgrade glob2' // corrected to glob2
+                sh 'pip install --upgrade PyYAML' // corrected to PyYAML
                 
                 // Install Black and Pylint
                 sh 'pip install black pylint'
