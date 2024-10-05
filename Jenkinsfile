@@ -12,8 +12,8 @@ pipeline {
                 sh 'python3 -m pip install --upgrade pip'
                 sh 'pip install --upgrade netmiko'
                 sh 'pip install --upgrade flask'
-                sh 'pip install --upgrade glob2' // corrected to glob2
-                sh 'pip install --upgrade PyYAML' // corrected to PyYAML
+                sh 'pip install --upgrade glob'
+                sh 'pip install --upgrade yaml'
                 
                 // Install Black and Pylint
                 sh 'pip install black pylint'
@@ -22,11 +22,13 @@ pipeline {
 
         stage('Check Code Format with Black') {
             steps {
-                // Run Black to check the code format only on .py files
                 script {
-                    def blackOutput = sh(script: 'black --check **/*.py', returnStatus: true)
-                    if (blackOutput != 0) {
-                        error "Code format issues found. Please run Black to format your code."
+                    // Run Black to check the code format on all .py files
+                    def blackCheck = sh(script: 'black --check **/*.py', returnStatus: true)
+                    if (blackCheck != 0) {
+                        // If there are formatting issues, reformat the code
+                        sh 'black **/*.py'
+                        echo "Code has been reformatted by Black."
                     } else {
                         echo "Code format check passed."
                     }
@@ -36,8 +38,8 @@ pipeline {
 
         stage('Run Pylint') {
             steps {
-                // Run Pylint for static code analysis only on .py files
                 script {
+                    // Run Pylint for static code analysis on all .py files
                     def pylintOutput = sh(script: 'pylint **/*.py', returnStatus: true)
                     if (pylintOutput != 0) {
                         error "Pylint found issues in the code."
