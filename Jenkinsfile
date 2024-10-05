@@ -80,7 +80,7 @@ pipeline {
                     sh 'git commit -m "Automated formatting changes by Black" || echo "No changes to commit"'
                     
                     // Push changes to the main branch
-                    sh 'git push git@github.com:ddeniro-hash/advnetman.git HEAD:refs/heads/main'
+                    sh 'git push https://ddeniro-hash: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@github.com/ddeniro-hash/advnetman.git HEAD:refs/heads/main'
                 }
             }
         }
