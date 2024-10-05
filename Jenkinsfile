@@ -1,14 +1,6 @@
 pipeline {
     agent any
 
-    stages {
-        stage('Checkout') {
-            steps {
-                // Checkout the code from your repository
-                git branch: 'main', url: 'https://github.com/username/repository.git'
-            }
-        }
-
         stage('Install Dependencies') {
             steps {
                 // Ensure that Python and pip are available
