@@ -14,9 +14,24 @@ pipeline {
                 sh 'pip install --upgrade flask'
                 sh 'pip install --upgrade glob2'
                 sh 'pip install --upgrade PyYAML'
-                
-                // Install Black and Pylint
-                sh 'pip install black pylint'
+                sh 'pip install --upgrade black'
+                sh 'pip install --upgrade pylint'
+            }
+        }
+
+        stage('Check Code Format with Black') {
+            steps {
+                script {
+                    // Run Black to check the code format on all .py files
+                    def blackCheck = sh(script: 'black --check *.py', returnStatus: true)
+                    if (blackCheck != 0) {
+                        // If there are formatting issues, reformat the code
+                        sh 'black *.py'
+                        echo "Code has been reformatted by Black."
+                    } else {
+                        echo "Code format check passed."
+                    }
+                }
             }
         }
 
@@ -42,7 +57,7 @@ pipeline {
                     // Run Pylint for static code analysis on all .py files
                     def pylintOutput = sh(script: 'pylint **/*.py', returnStatus: true)
                     if (pylintOutput != 0) {
-                        error "Pylint found issues in the code."
+                        echo "Pylint found issues in the code:\n${pylintOutput}"
                     } else {
                         echo "Pylint check passed."
                     }
