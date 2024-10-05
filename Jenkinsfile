@@ -79,9 +79,8 @@ pipeline {
                     // Commit changes
                     sh 'git commit -m "Automated formatting changes by Black" || echo "No changes to commit"'
                     
-                    // Push changes to the current branch
-                    def currentBranch = sh(script: 'git rev-parse --abbrev-ref HEAD', returnStdout: true).trim()
-                    sh "git push origin ${currentBranch}"
+                    // Push changes to the main branch
+                    sh 'git push origin HEAD:refs/heads/main'
                 }
             }
         }
