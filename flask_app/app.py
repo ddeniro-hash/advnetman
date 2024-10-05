@@ -7,22 +7,72 @@ import os
 import glob
 import yaml
 import re
-import jinja2
+from netboxapitest import NetBoxIPFetcher
+#import jinja2
 
 app = Flask(__name__)
 
+api_url = "https://127.0.0.1/api/ipam/ip-addresses/"
+token = "f204e7a30dd20be312d033f4ec4e0096ddd1aaa5"
+
+# Create an instance of NetBoxIPFetcher
+ip_fetcher = NetBoxIPFetcher(api_url, token)
+
+# Fetch the IP addresses
+ip_fetcher.fetch_ips()
+
+r1_ip = ip_fetcher.get_ip_address("r1")
+r2_ip = ip_fetcher.get_ip_address("r2")
+r3_ip = ip_fetcher.get_ip_address("r3")
+r4_ip = ip_fetcher.get_ip_address("r4")
+sw1_ip = ip_fetcher.get_ip_address("sw1")
+sw2_ip = ip_fetcher.get_ip_address("sw2")
+sw3_ip = ip_fetcher.get_ip_address("sw3")
+sw4_ip = ip_fetcher.get_ip_address("sw4")
+
+def read_passwords_from_file(filename='/home/student/passwords.txt'):
+    """Read passwords from a specified file and return as a dictionary."""
+    passwords = {}
+    try:
+        with open(filename, 'r') as file:
+            for line in file:
+                device, password = line.strip().split(': ')
+                passwords[device] = password
+        print("Passwords loaded successfully.")
+    except FileNotFoundError:
+        print(f"Error: The file '{filename}' does not exist.")
+    except Exception as e:
+        print(f"An error occurred: {e}")
+    
+    return passwords
+
+# Read the passwords from the file
+passwords = read_passwords_from_file()
+
+# Assign passwords to variables for each device
+r1pass = passwords.get('R1')  
+r2pass = passwords.get('R2')
+r3pass = passwords.get('R3')
+r4pass = passwords.get('R4')
+sw1pass = passwords.get('SW1')
+sw2pass = passwords.get('SW2')
+sw3pass = passwords.get('SW3')
+sw4pass = passwords.get('SW4')
+
 devices = [
-    {'name': 'R1', 'ip': '10.10.200.1', 'device_type': 'cisco_ios'},
-    {'name': 'R2', 'ip': '10.10.200.2', 'device_type': 'cisco_ios'},
-    {'name': 'R3', 'ip': '10.10.200.3', 'device_type': 'cisco_ios'},
-    {'name': 'R4', 'ip': '10.10.200.4', 'device_type': 'cisco_ios'},
-    {'name': 'SW1', 'ip': '10.10.201.12', 'device_type': 'cisco_ios'},
-    {'name': 'SW2', 'ip': '10.10.201.22', 'device_type': 'cisco_ios'},
-    {'name': 'SW3', 'ip': '10.10.200.32', 'device_type': 'cisco_ios'},
-    {'name': 'SW4', 'ip': '10.10.200.42', 'device_type': 'cisco_ios'},
+    {'name': 'R1', 'ip': r1_ip, 'device_type': 'arista_eos', 'password': r1pass},
+    {'name': 'R2', 'ip': r2_ip, 'device_type': 'arista_eos', 'password': r2pass},
+    {'name': 'R3', 'ip': r3_ip, 'device_type': 'arista_eos', 'password': r3pass},
+    {'name': 'R4', 'ip': r4_ip, 'device_type': 'arista_eos', 'password': r4pass},
+    {'name': 'SW1', 'ip': sw1_ip, 'device_type': 'arista_eos', 'password': sw1pass},
+    {'name': 'SW2', 'ip': sw2_ip, 'device_type': 'arista_eos', 'password': sw2pass},
+    {'name': 'SW3', 'ip': sw3_ip, 'device_type': 'arista_eos', 'password': sw3pass},
+    {'name': 'SW4', 'ip': sw4_ip, 'device_type': 'arista_eos', 'password': sw4pass},
 ]
-username = 'admin'
-password = 'admin'
+
+username = 'netuser'
+#username = 'admin'
+#password = 'admin'
 
 # Route for home page
 @app.route('/')
@@ -56,7 +106,7 @@ def configure():
                 device_type=device['device_type'],
                 host=device['ip'],
                 username=username,
-                password=password
+                password=device['password']
             )
 
             # Prepare the commands to send to the device
@@ -117,7 +167,7 @@ def save_config(device_name):
         'device_type': device['device_type'],
         'host': device['ip'],
         'username': username,  # Use the correct username here
-        'password': password   # Use the correct password here
+        'password': device['password']   # Use the correct password here
     }
 
     # Connect to the device and save the running config
