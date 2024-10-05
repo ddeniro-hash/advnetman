@@ -12,7 +12,7 @@ pipeline {
                 sh 'python3 -m pip install --upgrade pip'
                 sh 'pip install --upgrade netmiko'
                 sh 'pip install --upgrade flask'
-                sh 'pip install --upgrade glob'
+                sh 'pip install --upgrade glob2'
                 sh 'pip install --upgrade yaml'
                 
                 // Install Black and Pylint
