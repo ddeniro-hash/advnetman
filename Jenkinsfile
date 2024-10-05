@@ -64,23 +64,24 @@ pipeline {
                 }
             }
         }
-    }
 
+        // Correctly nest the 'Push Changes' stage within the 'stages' block
         stage('Push Changes') {
-        steps {
-            script {
-                // Configure git (ensure you have set the correct user email and name)
-                sh 'git config --global user.email "dantedeniro24@gmail.com'
-                sh 'git config --global user.name "ddeniro-hash"'
-                
-                // Add changes to staging
-                sh 'git add .'
-                
-                // Commit changes
-                sh 'git commit -m "Automated formatting changes by Black" || echo "No changes to commit"'
-                
-                // Push changes (ensure that the correct credentials are configured)
-                sh 'git push origin main'
+            steps {
+                script {
+                    // Configure git (ensure you have set the correct user email and name)
+                    sh 'git config --global user.email "dantedeniro24@gmail.com"'
+                    sh 'git config --global user.name "ddeniro-hash"'
+                    
+                    // Add changes to staging
+                    sh 'git add .'
+                    
+                    // Commit changes
+                    sh 'git commit -m "Automated formatting changes by Black" || echo "No changes to commit"'
+                    
+                    // Push changes (ensure that the correct credentials are configured)
+                    sh 'git push origin main'
+                }
             }
         }
     }
