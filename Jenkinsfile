@@ -19,21 +19,6 @@ pipeline {
             }
         }
 
-        stage('Check Code Format with Black') {
-            steps {
-                script {
-                    // Run Black to check the code format on all .py files
-                    def blackCheck = sh(script: 'black --check *.py', returnStatus: true)
-                    if (blackCheck != 0) {
-                        // If there are formatting issues, reformat the code
-                        sh 'black *.py'
-                        echo "Code has been reformatted by Black."
-                    } else {
-                        echo "Code format check passed."
-                    }
-                }
-            }
-        }
 
         stage('Check Code Format with Black') {
             steps {
@@ -43,6 +28,14 @@ pipeline {
                     if (blackCheck != 0) {
                         // If there are formatting issues, reformat the code
                         sh 'black **/*.py'
+                        echo "Code has been reformatted by Black."
+                    } else {
+                        echo "Code format check passed."
+                    // Run Black to check the code format on all .py files
+                    def blackCheck = sh(script: 'black --check *.py', returnStatus: true)
+                    if (blackCheck != 0) {
+                        // If there are formatting issues, reformat the code
+                        sh 'black *.py'
                         echo "Code has been reformatted by Black."
                     } else {
                         echo "Code format check passed."
