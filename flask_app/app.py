@@ -8,13 +8,11 @@ import glob
 import yaml
 import re
 from netboxapitest import NetBoxIPFetcher
-<<<<<<< HEAD
 import pyeapi
 #import jinja2
-=======
+
 
 # import jinja2
->>>>>>> origin/main
 
 app = Flask(__name__)
 
@@ -329,11 +327,9 @@ def templatize_device():
     except Exception as e:
         return f"Error converting configuration to YAML: {str(e)}", 500
 
-<<<<<<< HEAD
-# Used in generate_template
-=======
 
->>>>>>> origin/main
+# Used in generate_template
+
 def create_jinja2_template_from_yaml(yaml_file, template_name):
     with open(yaml_file, "r") as f:
         config_data = yaml.safe_load(f)
@@ -451,7 +447,7 @@ def health_check():
             )
             connection.enable()
 
-<<<<<<< HEAD
+
             # Run commands and store raw outputs
             ping_output = connection.send_command("ping 10.10.200.1").strip()
             bgp_output = connection.send_command("show ip bgp summary").strip()
@@ -471,7 +467,7 @@ def health_check():
                 'ospf_neighbors': parsed_ospf_neighbors,
                 'routing_table': parsed_routes,
                 'cpu': f"CPU Load AVG: {load_avg}"
-=======
+
             # Check commands and trim output
             results[device["name"]] = {
                 "ip_connectivity": connection.send_command(
@@ -485,7 +481,6 @@ def health_check():
                 "cpu": connection.send_command(
                     "show snmp mib walk .1.3.6.1.2.1.25.3.3.1.2"
                 ).strip(),
->>>>>>> origin/main
             }
 
             connection.disconnect()
