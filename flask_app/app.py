@@ -7,7 +7,8 @@ import os
 import glob
 import yaml
 import re
-from netboxapitest import NetBoxIPFetcher   
+from netboxapitest import NetBoxIPFetcher
+import pyeapi
 #import jinja2
 
 app = Flask(__name__)
@@ -295,6 +296,7 @@ def templatize_device():
     except Exception as e:
         return f"Error converting configuration to YAML: {str(e)}", 500
 
+# Used in generate_template
 def create_jinja2_template_from_yaml(yaml_file, template_name):
     with open(yaml_file, 'r') as f:
         config_data = yaml.safe_load(f)
@@ -391,6 +393,15 @@ def health_check():
 
     for device in devices:
         try:
+            
+            device_eapi = pyeapi.connect(host=device['ip'], username=username, password=device['password'])
+
+            # Gather routing table and CPU usage using eAPI
+            route_output = device_eapi.execute(['show rib route ip'])
+            cpu_output = device_eapi.execute(['show processes'])
+
+            load_avg = cpu_output['result'][0]['timeInfo']['loadAvg']
+
             connection = ConnectHandler(
                 device_type=device['device_type'],
                 host=device['ip'],
@@ -398,14 +409,26 @@ def health_check():
                 password=device['password']
             )
             connection.enable()
-            
-            # Check commands and trim output
+
+            # Run commands and store raw outputs
+            ping_output = connection.send_command("ping 10.10.200.1").strip()
+            bgp_output = connection.send_command("show ip bgp summary").strip()
+            ospf_output = connection.send_command("show ip ospf neighbor").strip()
+            #route_output = connection.send_command("show ip route").strip()
+            #cpu_output = connection.send_command("show snmp mib walk .1.3.6.1.2.1.25.3.3.1.2").strip()
+
+            # Parse ping output
+            parsed_ping_stats = parse_ping_output(ping_output)
+            parsed_ospf_neighbors = parse_ospf_neighbors(ospf_output)
+            parsed_bgp_neighbors = parse_bgp_neighbors(bgp_output)
+            parsed_routes = parse_routing_info(route_output)
+
             results[device['name']] = {
-                'ip_connectivity': connection.send_command("ping 10.10.200.1").strip(),  # Change IP to check as needed
-                'bgp_neighbors': connection.send_command("show ip bgp summary").strip(),
-                'ospf_neighbors': connection.send_command("show ip ospf neighbor").strip(),
-                'routing_table': connection.send_command("show ip route").strip(),
-                'cpu': connection.send_command("show snmp mib walk .1.3.6.1.2.1.25.3.3.1.2").strip()
+                'ip_connectivity': parsed_ping_stats,
+                'bgp_neighbors': parsed_bgp_neighbors,
+                'ospf_neighbors': parsed_ospf_neighbors,
+                'routing_table': parsed_routes,
+                'cpu': f"CPU Load AVG: {load_avg}"
             }
 
             connection.disconnect()
@@ -413,6 +436,71 @@ def health_check():
             results[device['name']] = str(e)
 
     return render_template('healthcheck.html', results=results)
+
+# Used in health_check
+def parse_ping_output(output):
+    match = re.search(r'(\d+) packets transmitted, (\d+) received, (\d+)% packet loss', output)
+    if match:
+        transmitted = int(match.group(1))
+        received = int(match.group(2))
+        packet_loss = int(match.group(3))
+        return f"{transmitted} transmitted, {received} received, {packet_loss}% loss"
+    return "Ping output parsing failed"
+
+# Used in health_check
+def parse_ospf_neighbors(output):
+    neighbors = []
+    # Regex to match Neighbor ID and State, excluding extra spaces or trailing data.
+    pattern = re.compile(
+        r'^\s*(\d+\.\d+\.\d+\.\d+)\s+\d+\s+\S+\s+\d+\s+([\w\s/]+)\s+\d{2}:\d{2}:\d{2}', re.MULTILINE
+    )
+
+    for line in output.splitlines():
+        match = pattern.match(line)
+        if match:
+            neighbor_id = match.group(1)
+            state = match.group(2).strip()  # Clean up any extra spaces.
+            neighbors.append(f"Neighbor ID {neighbor_id} {state}")
+
+    return neighbors if neighbors else ["No OSPF neighbors found"]
+
+# Used in health_check
+def parse_bgp_neighbors(output):
+    neighbors = []
+    # Regex to match neighbor IP, AS, and state.
+    pattern = re.compile(
+        r'^\s*(\d+\.\d+\.\d+\.\d+)\s+\d+\s+(\d+)\s+\d+\s+\d+\s+\d+\s+\d+\s+\S+\s+(\w+)', re.MULTILINE
+    )
+
+    for line in output.splitlines():
+        match = pattern.match(line)
+        if match:
+            neighbor_ip = match.group(1)
+            as_number = match.group(2)
+            state = match.group(3)
+            neighbors.append(f"Neighbor {neighbor_ip}, AS {as_number}, State {state}")
+
+    return neighbors if neighbors else ["No BGP neighbors found"]
+
+# Used in health_check
+def parse_routing_info(route_output):
+    # Initialize a list to hold parsed route information
+    routes_info = []
+
+    # Extracting routes by protocol
+    for entry in route_output['result']:
+        if 'ribRoutesByProtocol' in entry:
+            for protocol, routes in entry['ribRoutesByProtocol'].items():
+                for route, details in routes['ribRoutes'].items():
+                    next_hops = details.get('resolvedNextHops', [])
+                    for hop in next_hops:
+                        routes_info.append({
+                            'route': route,
+                            'protocol': protocol,
+                            'next_hop': hop['ipNextHop']['interface']
+                        })
+
+    return routes_info
 
 
 if __name__ == '__main__':

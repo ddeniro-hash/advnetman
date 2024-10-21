@@ -34,6 +34,12 @@
             <td style="padding: 4px; white-space: pre-wrap;">{{ result.routing_table }}</td>
         {% endfor %}
     </tr>
+    <tr>
+        <td style="padding: 8px;">CPU</td>
+        {% for result in results.values() %}
+            <td style="padding: 4px; white-space: pre-wrap;">{{ result.cpu }}</td>
+        {% endfor %}
+    </tr>
 </table>
 <a href="{{ url_for('device_list') }}" target="_blank">Back to Device List</a>
 {% endblock %}
