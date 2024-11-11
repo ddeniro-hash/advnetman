@@ -19,10 +19,14 @@ class NetBoxIPFetcher:
             "r2": {"device_id": 2, "interface_id": 22},
             "r3": {"device_id": 3, "interface_id": 36},
             "r4": {"device_id": 4, "interface_id": 41},
+            "r6": {"device_id": 9, "interface_id": 67},
+            "r7": {"device_id": 10, "interface_id": 71},
+            "r8": {"device_id": 11, "interface_id": 73},
             "sw1": {"device_id": 5, "interface_id": 48},
             "sw2": {"device_id": 6, "interface_id": 55},
             "sw3": {"device_id": 7, "interface_id": 61},
-            "sw4": {"device_id": 8, "interface_id": 66}
+            "sw4": {"device_id": 8, "interface_id": 66},
+            "sw5": {"device_id": 12, "interface_id": 78}
         }
         self.ip_addresses = {}
 

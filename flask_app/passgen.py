@@ -19,7 +19,7 @@ def save_passwords_to_file(passwords, filename="passwords.txt"):
 
 
 if __name__ == "__main__":
-    devices = ["R1", "R2", "R3", "R4","R6","R7", "SW1", "SW2", "SW3", "SW4"]  # List of devices
+    devices = ["R1", "R2", "R3", "R4","R6","R7", "R8", "SW1", "SW2", "SW3", "SW4", "SW5"]  # List of devices
     password_length = 12  # Set the desired length of the password
     passwords = {
         device: generate_random_password(password_length) for device in devices

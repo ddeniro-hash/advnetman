@@ -16,10 +16,14 @@
                 <option value="r2">Router 2 (R2)</option>
                 <option value="r3">Router 3 (R3)</option>
                 <option value="r4">Router 4 (R4)</option>
+                <option value="r6">Router 6 (R6)</option>
+                <option value="r7">Router 7 (R7)</option>
+                <option value="r8">Router 8 (R8)</option>
                 <option value="sw1">Switch 1 (SW1)</option>
                 <option value="sw2">Switch 2 (SW2)</option>
                 <option value="sw3">Switch 3 (SW3)</option>
                 <option value="sw4">Switch 4 (SW4)</option>
+                <option value="sw5">Switch 5 (SW5)</option>
             </select>
         </div>
         <div>
@@ -107,7 +111,7 @@
             // Define interface options based on device selection
             let interfaces = [];
 
-            if (deviceName === 'r1' || deviceName === 'r2') {
+            if (deviceName === 'r1' || deviceName === 'r2' || deviceName === 'r6' || deviceName === 'r7' || deviceName === 'r8') {
                 interfaces = ['ethernet 1', 'ethernet 2', 'loopback1'];
             } else if (deviceName === 'r3' || deviceName === 'r4') {
                 interfaces = ['ethernet 1', 'ethernet 2', 'ethernet 3', 'loopback1'];

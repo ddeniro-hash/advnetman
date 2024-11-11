@@ -26,10 +26,14 @@ r1_ip = ip_fetcher.get_ip_address("r1")
 r2_ip = ip_fetcher.get_ip_address("r2")
 r3_ip = ip_fetcher.get_ip_address("r3")
 r4_ip = ip_fetcher.get_ip_address("r4")
+r6_ip = ip_fetcher.get_ip_address("r6")
+r7_ip = ip_fetcher.get_ip_address("r7")
+r8_ip = ip_fetcher.get_ip_address("r8")
 sw1_ip = ip_fetcher.get_ip_address("sw1")
 sw2_ip = ip_fetcher.get_ip_address("sw2")
 sw3_ip = ip_fetcher.get_ip_address("sw3")
 sw4_ip = ip_fetcher.get_ip_address("sw4")
+sw5_ip = ip_fetcher.get_ip_address("sw5")
 
 def read_passwords_from_file(filename='/home/student/passwords.txt'):
     """Read passwords from a specified file and return as a dictionary."""
@@ -55,20 +59,28 @@ r1pass = passwords.get('R1')
 r2pass = passwords.get('R2')
 r3pass = passwords.get('R3')
 r4pass = passwords.get('R4')
+r6pass = passwords.get('R6')
+r7pass = passwords.get('R7')
+r8pass = passwords.get('R8')
 sw1pass = passwords.get('SW1')
 sw2pass = passwords.get('SW2')
 sw3pass = passwords.get('SW3')
 sw4pass = passwords.get('SW4')
+sw5pass = passwords.get('SW5')
 
 devices = [
     {'name': 'R1', 'ip': r1_ip, 'device_type': 'arista_eos', 'password': r1pass},
     {'name': 'R2', 'ip': r2_ip, 'device_type': 'arista_eos', 'password': r2pass},
     {'name': 'R3', 'ip': r3_ip, 'device_type': 'arista_eos', 'password': r3pass},
     {'name': 'R4', 'ip': r4_ip, 'device_type': 'arista_eos', 'password': r4pass},
+    {'name': 'R6', 'ip': r6_ip, 'device_type': 'arista_eos', 'password': r6pass},
+    {'name': 'R7', 'ip': r7_ip, 'device_type': 'arista_eos', 'password': r7pass},
+    {'name': 'R8', 'ip': r8_ip, 'device_type': 'arista_eos', 'password': r8pass},
     {'name': 'SW1', 'ip': sw1_ip, 'device_type': 'arista_eos', 'password': sw1pass},
     {'name': 'SW2', 'ip': sw2_ip, 'device_type': 'arista_eos', 'password': sw2pass},
     {'name': 'SW3', 'ip': sw3_ip, 'device_type': 'arista_eos', 'password': sw3pass},
     {'name': 'SW4', 'ip': sw4_ip, 'device_type': 'arista_eos', 'password': sw4pass},
+    {'name': 'SW5', 'ip': sw5_ip, 'device_type': 'arista_eos', 'password': sw5pass},
 ]
 
 username = 'netuser'
@@ -374,6 +386,12 @@ def generate_template():
         template_name = f"{device_name}_template"
     elif device_name in ['r3', 'r4']:
         template_name = f"{device_name}_template"
+    elif device_name in ['r6', 'r7']:
+        template_name = f"{device_name}_template"
+    elif device_name in ['r8']:
+        template_name = f"{device_name}_template"
+    elif device_name in ['sw5']:
+        template_name = f"{device_name}_template"
     else:
         return f"Unknown device: {device_name}", 400
 
@@ -411,7 +429,7 @@ def health_check():
             connection.enable()
 
             # Run commands and store raw outputs
-            ping_output = connection.send_command("ping 10.10.200.1").strip()
+            ping_output = connection.send_command("ping 10.10.200.100").strip()
             bgp_output = connection.send_command("show ip bgp summary").strip()
             ospf_output = connection.send_command("show ip ospf neighbor").strip()
             #route_output = connection.send_command("show ip route").strip()

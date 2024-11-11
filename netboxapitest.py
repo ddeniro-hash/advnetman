@@ -1,7 +1,5 @@
 #!/usr/bin/env python3
 
-#!/usr/bin/env python3
-
 # netbox_ip_fetcher.py
 import requests
 import warnings
