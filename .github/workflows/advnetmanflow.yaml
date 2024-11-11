@@ -52,7 +52,7 @@ jobs:
         if: steps.pylint.outcome == 'success'
         run: |
           echo "Running unit tests with pyappsunittest.py..."
-          python pyappsunittest.py
+          python advmanunittest.py
 
       - name: ♣ Run Code Coverage
         if: steps.unittest.outcome == 'success'
