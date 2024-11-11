@@ -1,0 +1,61 @@
+name: Python CI Workflow
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  python-ci:
+    runs-on: self-hosted
+
+    steps:
+      - name: 📥 Checkout Code
+        uses: actions/checkout@v4
+
+      - name: 🐍 Set up Python 3.10.12
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.10.12"
+
+      - name: 📦 Install Dependencies
+        run: |
+          echo "Installing dependencies..."
+          python -m pip install --upgrade pip
+          pip install black pylint pytest
+          pip install flask netmiko pyeapi
+          pip install PyYAML glob2
+          pip install pylint
+
+      - name: 🛠️ Run Black Code Formatter
+        continue-on-error: true
+        run: |
+          echo "Running Black on the following files:"
+          find . -type f -name "*.py"
+          echo "------------------------------------"
+          black --check .
+
+      - name: 🔍 Run Pylint Static Analysis
+        id: pylint
+        continue-on-error: true
+        run: |
+          echo "Running Pylint on the following files:"
+          find . -type f -name "*.py"
+          echo "------------------------------------"
+          
+          # Run pylint while disabling duplicate code checks
+          pylint --disable=R0801,C0114,C0115,C0116 --exit-zero $(git ls-files '*.py')
+
+      - name: ✅ Run Unit Tests
+        id: unittest
+        if: steps.pylint.outcome == 'success'
+        run: |
+          echo "Running unit tests with pyappsunittest.py..."
+          python pyappsunittest.py
+
+      - name: ♣ Run Code Coverage
+        if: steps.unittest.outcome == 'success'
+        run: |
+          echo "Running code coverage with codecoverage.py..."
+          python codecoverage.py
