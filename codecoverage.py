@@ -11,6 +11,7 @@ target_functions = [
     "test_ospf_neighbors",
     "test_ping_addresses",
     "test_ssh_connection",
+    "test_mac_formatting_in_code",
     "test_yaml_to_jinja",
     "test_file_exists_goldenconfig",
     "test_check_netboxapi",
