@@ -33,24 +33,25 @@ mac_regex = r"([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2})"
 username = "admin"
 password = "admin"
 
+class TestRouterConfigs(unittest.TestCase):
 
-def test_mac_formatting_in_code(self):
-    """Test that MAC addresses in the sudotftp2.py file are properly formatted."""
-    # Path to the file to check
-    file_path = "/home/student/flask_app/sudotftp2.py"
-    
-    # Read the file content
-    with open(file_path, 'r') as file:
-        content = file.read()
-    
-    # Find all complete MAC addresses in the code using regex
-    mac_addresses = re.finditer(mac_regex, content)
-    
-    # Test each MAC address for proper formatting
-    for match in mac_addresses:
-        mac_str = match.group(0)  # Full MAC address string from match
-        self.assertRegex(mac_str, mac_regex, f"{mac_str} is not a valid MAC address.")
-        print(f"{mac_str} is a valid MAC address.")
+    def test_mac_formatting_in_code(self):
+        """Test that MAC addresses in the sudotftp2.py file are properly formatted."""
+        # Path to the file to check
+        file_path = "/home/student/flask_app/sudotftp2.py"
+        
+        # Read the file content
+        with open(file_path, 'r') as file:
+            content = file.read()
+        
+        # Find all complete MAC addresses in the code using regex
+        mac_addresses = re.finditer(mac_regex, content)
+        
+        # Test each MAC address for proper formatting
+        for match in mac_addresses:
+            mac_str = match.group(0)  # Full MAC address string from match
+            self.assertRegex(mac_str, mac_regex, f"{mac_str} is not a valid MAC address.")
+            print(f"{mac_str} is a valid MAC address.")
 
     def test_ping_addresses(self):
         """Test to ping all specified IP addresses."""
