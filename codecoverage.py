@@ -40,4 +40,4 @@ def get_coverage(file_path):
     print(f"Total Code Coverage: {coverage}%")
 
 # Run the coverage check on pyappsunittest.py
-get_coverage("pyappsunittest.py")
+get_coverage("advmanunittest.py")
