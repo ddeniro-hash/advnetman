@@ -13,10 +13,14 @@ devices = {
     "r2": "10.10.200.2",
     "r3": "10.10.200.3",
     "r4": "10.10.200.4",
+    "r6": "10.10.7.100",
+    "r7": "10.10.8.101",
+    "r8": "10.10.9.101",
     "sw1": "10.10.201.12",
     "sw2": "10.10.201.22",
     "sw3": "10.10.200.32",
     "sw4": "10.10.200.42",
+    "sw5": "10.10.202.101",
 }
 
 # Regex for validating IP addresses
@@ -78,7 +82,7 @@ class TestRouterConfigs(unittest.TestCase):
 
     def test_ospf_neighbors(self):
         """Check OSPF neighbors for each device."""
-        for device in ["r1", "r2", "r3", "r4"]:
+        for device in ["r1", "r2", "r3", "r4", "r6", "r8"]:
             ip = devices[device]
             try:
                 device_eapi = pyeapi.connect(host=ip, username=username, password=password)
