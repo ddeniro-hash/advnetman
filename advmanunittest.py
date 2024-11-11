@@ -26,6 +26,9 @@ devices = {
 # Regex for validating IP addresses
 regex = r"^((25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9])\.){3}(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9])$"
 
+# Regex for validating MAC addresses
+mac_regex = r"([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2})"
+
 # Router information
 username = "admin"
 password = "admin"
@@ -38,6 +41,24 @@ class TestRouterConfigs(unittest.TestCase):
         for device, ip in devices.items():
             self.assertRegex(ip, regex, f"{device} IP {ip} is not properly formatted.")
             print(f"{device} IP {ip} is properly formatted.")
+            
+    def test_mac_formatting_in_code(self):
+        """Test that MAC addresses in the sudotftp2.py file are properly formatted."""
+        # Path to the file to check
+        file_path = "/home/student/flask_app/sudotftp2.py"
+        
+        # Read the file content
+        with open(file_path, 'r') as file:
+            content = file.read()
+        
+        # Find all MAC addresses in the code using regex
+        mac_addresses = re.findall(mac_regex, content)
+        
+        # Test each MAC address for proper formatting
+        for mac in mac_addresses:
+            mac_str = "".join(mac)  # Convert tuple to MAC string
+            self.assertRegex(mac_str, mac_regex, f"{mac_str} is not a valid MAC address.")
+            print(f"{mac_str} is a valid MAC address.")
 
     def test_ping_addresses(self):
         """Test to ping all specified IP addresses."""
