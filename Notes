@@ -1,0 +1,24 @@
+snmpwalk -v 2c -c public 10.10.201.22 HOST-RESOURCES-MIB::hrProcessorLoad -> CPU utilization per core
+snmpwalk -v 2c -c public 10.10.201.22 .1.3.6.1.2.1.25.3.3.1.2 -> CPU utilization per core
+
+gnmic -a 10.10.201.12:6030 -u admin -p admin --insecure get --path interfaces/interface/state/oper-status
+
+
+ZvM60KrgnvqIwb-RY7FaWuHMNmoD5r6LPGNXHRKMGDJt8pUrbW-kAoNNHiqhVgCsuSVNfYQI9d78m-kQhtAfpw==
+
+
+
+/var/log/remote/r1-r4 & sw1-sw4 --> SNMP information
+
+
+vi .gnmic.yaml
+gnmic subscribe --config .gnmic.yaml
+/home/student/lab1/grpcdata.log
+
+github pat = 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
+
+netbox api = f204e7a30dd20be312d033f4ec4e0096ddd1aaa5
+
+sudo -S truncate -s 0 /var/log/syslog 
+sudo -S truncate -s 0 /var/log/syslog.1
+sudo -S journalctl --vacuum-size=100M
