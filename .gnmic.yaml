@@ -1,45 +1,132 @@
-# gnmic.yaml
-username: admin
-password: admin
-insecure: true
+name: lab1
 
-targets:
-  R1:
-    address: 10.10.200.1:6030
-  R2:
-    address: 10.10.200.2:6030
-  R3:
-    address: 10.10.200.3:6030
-  R4:
-    address: 10.10.200.4:6030
-  sw4:
-    address: 10.10.200.42:6030
-  sw3:
-    address: 10.10.200.32:6030
-  sw1:
-    address: 10.10.201.12:6030
-  sw2:
-    address: 10.10.201.22:6030
+mgmt:
+  network: mgmt                       # management network name
+  ipv4-subnet: 10.10.250.0/24       # ipv4 range
+  
+topology:
+  nodes:
+      r1:
+       kind: arista_ceos
+       image: ceos:4.32.2F
+       startup-config: /home/student/Desktop/configs/r1config.cfg
+      r2:
+       kind: arista_ceos
+       image: ceos:4.32.2F
+       startup-config: /home/student/Desktop/configs/r2config.cfg
+      r3:
+       kind: arista_ceos
+       image: ceos:4.32.2F
+       startup-config: /home/student/Desktop/configs/r3config.cfg
+      r4:
+       kind: arista_ceos
+       image: ceos:4.32.2F
+       startup-config: /home/student/Desktop/configs/r4config.cfg
+      r5:
+       kind: arista_ceos
+       image: ceos:4.32.2F
+       startup-config: /home/student/Desktop/configs/r5config.cfg
+      r6:
+       kind: arista_ceos
+       image: ceos:4.32.2F
+       startup-config: /home/student/Desktop/configs/r6config.cfg
+      r7:
+       kind: arista_ceos
+       image: ceos:4.32.2F
+       startup-config: /home/student/Desktop/configs/r7config.cfg
+      r8:
+       kind: arista_ceos
+       image: ceos:4.32.2F
+       startup-config: /home/student/Desktop/configs/r8config.cfg
+       
+      sw1:
+       kind: arista_ceos
+       image: ceos:4.32.2F
+       startup-config: /home/student/Desktop/configs/sw1config.cfg
+      sw2:
+       kind: arista_ceos
+       image: ceos:4.32.2F
+       startup-config: /home/student/Desktop/configs/sw2config.cfg
+      sw3:
+       kind: arista_ceos
+       image: ceos:4.32.2F
+       startup-config: /home/student/Desktop/configs/sw3config.cfg
+      sw4:
+       kind: arista_ceos
+       image: ceos:4.32.2F
+       startup-config: /home/student/Desktop/configs/sw4config.cfg
+      sw5:
+       kind: arista_ceos
+       image: ceos:4.32.2F
+       startup-config: /home/student/Desktop/configs/sw5config.cfg
 
-subscriptions:
-  interface-counters:
-    paths:
-      - /interfaces/interface/state/oper-status
-      - components/component/cpu
-    sample-interval: 10s
-
-outputs:
-  influxdb:
-    type: influxdb
-    url: http://localhost:8086
-    org: boulder
-    bucket: lab2
-    token: ZvM60KrgnvqIwb-RY7FaWuHMNmoD5r6LPGNXHRKMGDJt8pUrbW-kAoNNHiqhVgCsuSVNfYQI9d78m-kQhtAfpw== #admin:admin123
-    override-timestamps: false
-    timestamp-precision: s
-    health-check-period: 30s
-    # enable debug
-    debug: true
-      #grpcfile:
-      #type: file
-      #filename: /home/student/lab1/grpcdata.log
+      h1:
+       kind: linux
+       image: alpine:latest
+       exec:
+         - apk update && apk add iproute2
+         - apk add curl
+         - ip link set eth1 up
+         - udhcpc -i eth1 -b
+         - ip route del default
+      h2:
+       kind: linux
+       image: alpine:latest
+       exec:
+         - apk update && apk add iproute2
+         - apk add curl
+         - ip link set eth1 up
+         - udhcpc -i eth1 -b
+         - ip route del default
+      h3:
+       kind: linux
+       image: alpine:latest
+       exec:
+         - apk update && apk add iproute2
+         - apk add curl
+         - ip link set eth1 up
+         - udhcpc -i eth1 -b
+         - ip route del default
+      h4:
+       kind: linux
+       image: alpine:latest
+       exec:
+         - apk update && apk add iproute2
+         - apk add curl
+         - ip link set eth1 up
+         - udhcpc -i eth1 -b
+         - ip route del default
+      webser:
+       kind: linux
+       image: httpd:2.4-alpine
+       exec:
+         - apk update && apk add iproute2
+         - apk add openrc
+         - ip addr add 10.10.6.100/24 dev eth1
+         - ip link set eth1 up
+         - ip route del default
+         - ip route add default via 10.10.6.254 dev eth1
+         - sed -i 's/^Listen 80/Listen 10.10.6.100:80/' /usr/local/apache2/conf/httpd.conf
+                        
+  links:
+    - endpoints: ["r5:eth1", "r4:eth1"]
+    - endpoints: ["r5:eth2", "r3:eth1"]
+    - endpoints: ["r4:eth2", "r3:eth2"]
+    - endpoints: ["r4:eth3", "sw4:eth1"]
+    - endpoints: ["r3:eth3", "sw3:eth1"]
+    - endpoints: ["sw3:eth2", "sw4:eth2"]
+    - endpoints: ["sw3:eth3", "r1:eth1"]
+    - endpoints: ["sw4:eth3", "r2:eth1"]
+    - endpoints: ["r1:eth2", "sw1:eth1"]
+    - endpoints: ["r2:eth2", "sw2:eth1"]
+    - endpoints: ["r2:eth3", "r8:eth1"]
+    - endpoints: ["r8:eth2", "sw5:eth1"]
+    - endpoints: ["sw1:eth2", "sw2:eth2"]
+    - endpoints: ["r4:eth4", "r6:eth1"]
+    - endpoints: ["r6:eth2", "r7:eth2"]
+    - endpoints: ["h1:eth1", "sw1:eth3"]
+    - endpoints: ["h2:eth1", "sw1:eth4"]
+    - endpoints: ["h3:eth1", "sw2:eth3"]
+    - endpoints: ["h4:eth1", "sw2:eth4"]
+    - endpoints: ["webser:eth1", "r5:eth3"]
+    - endpoints: ["host:cl-eth1","sw3:eth4"]
