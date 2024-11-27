@@ -1,0 +1,16 @@
+vlan 10
+management api http-commands
+protocol http
+no shutdown
+management api gnmi
+transport grpc default
+transport grpc openmgmt
+authorization requests
+operation set persistence
+snmp-server community public ro
+snmp-server user user1 normal v2c
+snmp-server engineID remote 10.10.200.100 DC1234567890
+snmp-server host 10.10.200.100 informs version 2c public
+snmp-server enable traps
+logging host 10.10.200.100
+logging level all critical
