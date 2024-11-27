@@ -1,0 +1,33 @@
+router ospf 100
+network 10.10.7.0 0.0.0.255 area 10
+redistribute connected
+redistribute rip
+router-id 6.6.6.6
+ip dhcp relay information option
+ip dhcp relay always-on
+ip dhcp relay all-subnets default
+interface ethernet 2
+no switchport 
+ip address 10.10.8.100 255.255.255.0
+no shut
+ip helper-address 10.10.1.254
+router rip
+network 10.10.8.0/24
+redistribute ospf
+redistribute ospf match external
+no shutdown
+management api http-commands
+protocol http
+no shutdown
+management api gnmi
+transport grpc default
+transport grpc openmgmt
+authorization requests
+operation set persistence
+snmp-server community public ro
+snmp-server user user1 normal v2c
+snmp-server engineID remote 10.10.200.100 DC1234567890
+snmp-server host 10.10.200.100 informs version 2c public
+snmp-server enable traps
+logging host 10.10.200.100
+logging level all critical
