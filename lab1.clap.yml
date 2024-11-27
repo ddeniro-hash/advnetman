@@ -26,7 +26,19 @@ topology:
        kind: arista_ceos
        image: ceos:4.32.2F
        startup-config: /home/student/Desktop/configs/r5config.cfg
-
+      r6:
+       kind: arista_ceos
+       image: ceos:4.32.2F
+       startup-config: /home/student/Desktop/configs/r6config.cfg
+      r7:
+       kind: arista_ceos
+       image: ceos:4.32.2F
+       startup-config: /home/student/Desktop/configs/r7config.cfg
+      r8:
+       kind: arista_ceos
+       image: ceos:4.32.2F
+       startup-config: /home/student/Desktop/configs/r8config.cfg
+       
       sw1:
        kind: arista_ceos
        image: ceos:4.32.2F
@@ -43,6 +55,11 @@ topology:
        kind: arista_ceos
        image: ceos:4.32.2F
        startup-config: /home/student/Desktop/configs/sw4config.cfg
+      sw5:
+       kind: arista_ceos
+       image: ceos:4.32.2F
+       startup-config: /home/student/Desktop/configs/sw5config.cfg
+
       h1:
        kind: linux
        image: alpine:latest
@@ -102,7 +119,11 @@ topology:
     - endpoints: ["sw4:eth3", "r2:eth1"]
     - endpoints: ["r1:eth2", "sw1:eth1"]
     - endpoints: ["r2:eth2", "sw2:eth1"]
+    - endpoints: ["r2:eth3", "r8:eth1"]
+    - endpoints: ["r8:eth2", "sw5:eth1"]
     - endpoints: ["sw1:eth2", "sw2:eth2"]
+    - endpoints: ["r4:eth4", "r6:eth1"]
+    - endpoints: ["r6:eth2", "r7:eth2"]
     - endpoints: ["h1:eth1", "sw1:eth3"]
     - endpoints: ["h2:eth1", "sw1:eth4"]
     - endpoints: ["h3:eth1", "sw2:eth3"]
