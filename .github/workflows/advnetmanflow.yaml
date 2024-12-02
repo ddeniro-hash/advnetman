@@ -27,6 +27,7 @@ jobs:
           pip install flask netmiko pyeapi
           pip install PyYAML glob2
           pip install pylint
+          pip install influxdb-client urllib3
 
       - name: 🛠️ Run Black Code Formatter
         continue-on-error: true
