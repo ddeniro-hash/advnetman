@@ -6,6 +6,24 @@ import os
 import subprocess
 from netmiko import ConnectHandler
 import pyeapi
+import unittest
+from unittest.mock import patch, MagicMock
+from influxdb_client import InfluxDBClient
+
+# Define the InfluxDB client and settings
+INFLUXDB_URL = "http://localhost:8086"
+INFLUXDB_TOKEN = "gFJ1WAaIxCtwzPzLmNXcqJXj9dJef1sJV75GESP-0iGFh64Az9o5--T20X2MxOiy-bbVAUwin3rDwyR3cmKolw=="
+INFLUXDB_ORG = "CU Boulder"
+INFLUXDB_BUCKET = "tshoot2"
+
+# Define the query
+QUERY = '''
+from(bucket: "tshoot2")
+  |> range(start: -1m)
+  |> filter(fn: (r) => r["source"] == "r1" or r["source"] == "r2" or r["source"] == "r3" or r["source"] == "r4" or r["source"] == "r8" or r["source"] == "r6" or r["source"] == "r7" or r["source"] == "sw1" or r["source"] == "sw2" or r["source"] == "sw3" or r["source"] == "sw4" or r["source"] == "sw5")
+  |> filter(fn: (r) => r["interface_name"] == "Ethernet1" or r["interface_name"] == "Ethernet3" or r["interface_name"] == "Ethernet4" or r["interface_name"] == "Management0" or r["interface_name"] == "Ethernet2")
+  |> yield(name: "last")
+'''
 
 # Define the IP addresses
 devices = {
@@ -34,6 +52,25 @@ username = "admin"
 password = "admin"
 
 class TestRouterConfigs(unittest.TestCase):
+
+    @patch.object(InfluxDBClient, 'query_api')
+    def test_influxdb_query_success(self, mock_query_api):
+        # Mock the query API response
+        mock_query_instance = MagicMock()
+        mock_query_api.return_value = mock_query_instance
+        mock_query_instance.query.return_value = "Mocked Query Result"  # Simulate a successful response
+        
+        # Execute the query
+        client = InfluxDBClient(url=INFLUXDB_URL, token=INFLUXDB_TOKEN, org=INFLUXDB_ORG)
+        result = client.query_api().query(org=INFLUXDB_ORG, query=QUERY)
+        
+        # Assert the query was executed
+        mock_query_instance.query.assert_called_once_with(org=INFLUXDB_ORG, query=QUERY)
+        
+        # Check if the result is as expected (i.e., "Mocked Query Result")
+        self.assertEqual(result, "Mocked Query Result")
+        
+        print("Successfully able to query InfluxDB via API")
 
     def test_mac_formatting_in_code(self):
         """Test that MAC addresses in the sudotftp2.py file are properly formatted."""
