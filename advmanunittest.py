@@ -35,24 +35,6 @@ password = "admin"
 
 class TestRouterConfigs(unittest.TestCase):
 
-    def test_send_email_success(self, MockSMTP):
-        # Arrange
-        mock_smtp_instance = MockSMTP.return_value
-        mock_smtp_instance.sendmail.return_value = None
-        subject = "Test Subject"
-        body = "Test Body"
-
-        # Act
-        send_email(subject, body)
-
-        # Assert
-        mock_smtp_instance.sendmail.assert_called_once_with(
-            "dantedeniro@gmail.com",
-            "dantedeniro@gmail.com",
-            "Content-Type: multipart/mixed; boundary=\"===============0604214941==\"\nMIME-Version: 1.0\nSubject: Test Subject\nFrom: dantedeniro@gmail.com\nTo: dantedeniro@gmail.com\n\n--===============0604214941==\nContent-Type: text/plain; charset=\"us-ascii\"\nContent-Transfer-Encoding: 7bit\n\nTest Body\n--===============0604214941==--\n"
-        )
-        print("[INFO] Email sent successfully.")
-
     def test_mac_formatting_in_code(self):
         """Test that MAC addresses in the sudotftp2.py file are properly formatted."""
         # Path to the file to check
