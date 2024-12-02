@@ -53,7 +53,6 @@ password = "admin"
 
 class TestRouterConfigs(unittest.TestCase):
 
-    @patch.object(InfluxDBClient, 'query_api')
     def test_influxdb_query_success(self, mock_query_api):
         # Mock the query API response
         mock_query_instance = MagicMock()
