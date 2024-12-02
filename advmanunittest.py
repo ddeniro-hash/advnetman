@@ -158,7 +158,8 @@ class TestRouterConfigs(unittest.TestCase):
                     print(f"No BGP information available for {device}.")
             except Exception as e:
                 print(f"Could not get BGP neighbors for {device}: {str(e)}")
-
+              
+    @patch.object(InfluxDBClient, 'query_api')
     def test_influxdb_query_success(self, mock_query_api):
         # Mock the query API response
         mock_query_instance = MagicMock()
