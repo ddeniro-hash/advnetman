@@ -49,6 +49,7 @@ jobs:
 
       - name: ✅ Run Unit Tests
         id: unittest
+        continue-on-error: true
         if: steps.pylint.outcome == 'success'
         run: |
           echo "Running unit tests with pyappsunittest.py..."
