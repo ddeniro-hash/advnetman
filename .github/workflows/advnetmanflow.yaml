@@ -56,7 +56,7 @@ jobs:
           python advmanunittest.py
 
       - name: ♣ Run Code Coverage
-        if: steps.unittest.outcome == 'success'
+        #if: steps.unittest.outcome == 'success'
         run: |
           echo "Running code coverage with codecoverage.py..."
           python codecoverage.py
