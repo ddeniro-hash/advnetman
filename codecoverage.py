@@ -15,6 +15,7 @@ target_functions = [
     "test_yaml_to_jinja",
     "test_file_exists_goldenconfig",
     "test_check_netboxapi",
+    "test_influxdb_query_success"
 ]
 
 def get_coverage(file_path):
