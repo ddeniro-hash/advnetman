@@ -34,7 +34,22 @@ TARGETS = {
 
 # Email settings
 SENDER_EMAIL = "dantedeniro@gmail.com"
-SENDER_PASSWORD = "lutu orkh apmn dury"
+# Read the sender password from the file
+def read_sender_password(file_path="/home/student/gitrepo/advnetman/email_credentials.txt"):
+    try:
+        with open(file_path, "r") as file:
+            return file.read().strip()  # Read the password and remove any extra whitespace
+    except FileNotFoundError:
+        print(f"Error: The file {file_path} was not found.")
+        return None
+    except Exception as e:
+        print(f"Error reading the password file: {e}")
+        return None
+
+# Get the sender password from the file
+SENDER_PASSWORD = read_sender_password()
+
+# Check if the password was successfully loaded
 RECIPIENT_EMAIL = "dantedeniro@gmail.com"
 SMTP_SERVER = "smtp.gmail.com"
 SMTP_PORT = 587
