@@ -53,24 +53,6 @@ password = "admin"
 
 class TestRouterConfigs(unittest.TestCase):
 
-    def test_influxdb_query_success(self, mock_query_api):
-        # Mock the query API response
-        mock_query_instance = MagicMock()
-        mock_query_api.return_value = mock_query_instance
-        mock_query_instance.query.return_value = "Mocked Query Result"  # Simulate a successful response
-        
-        # Execute the query
-        client = InfluxDBClient(url=INFLUXDB_URL, token=INFLUXDB_TOKEN, org=INFLUXDB_ORG)
-        result = client.query_api().query(org=INFLUXDB_ORG, query=QUERY)
-        
-        # Assert the query was executed
-        mock_query_instance.query.assert_called_once_with(org=INFLUXDB_ORG, query=QUERY)
-        
-        # Check if the result is as expected (i.e., "Mocked Query Result")
-        self.assertEqual(result, "Mocked Query Result")
-        
-        print("Successfully able to query InfluxDB via API")
-
     def test_mac_formatting_in_code(self):
         """Test that MAC addresses in the sudotftp2.py file are properly formatted."""
         # Path to the file to check
@@ -176,6 +158,24 @@ class TestRouterConfigs(unittest.TestCase):
                     print(f"No BGP information available for {device}.")
             except Exception as e:
                 print(f"Could not get BGP neighbors for {device}: {str(e)}")
+
+    def test_influxdb_query_success(self, mock_query_api):
+        # Mock the query API response
+        mock_query_instance = MagicMock()
+        mock_query_api.return_value = mock_query_instance
+        mock_query_instance.query.return_value = "Mocked Query Result"  # Simulate a successful response
+        
+        # Execute the query
+        client = InfluxDBClient(url=INFLUXDB_URL, token=INFLUXDB_TOKEN, org=INFLUXDB_ORG)
+        result = client.query_api().query(org=INFLUXDB_ORG, query=QUERY)
+        
+        # Assert the query was executed
+        mock_query_instance.query.assert_called_once_with(org=INFLUXDB_ORG, query=QUERY)
+        
+        # Check if the result is as expected (i.e., "Mocked Query Result")
+        self.assertEqual(result, "Mocked Query Result")
+        
+        print("Successfully able to query InfluxDB via API")
 
 if __name__ == "__main__":
     unittest.main()
